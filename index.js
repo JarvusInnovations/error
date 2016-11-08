@@ -63,7 +63,9 @@ function error(opts) {
             this.isDeveloper ||
             'development' == env ||
             this.request.origin.includes('staging') ||
-            this.request.origin.includes('sandbox')
+            this.request.origin.includes('sandbox') ||
+            this.request.origin === 'localhost' ||
+            this.request.origin === '127.0.0.1'
           );
           if (isDevelopment) this.body = { error: err, rawError: serializeError(err) }
           else if (err.expose) this.body = { error: err.message }
