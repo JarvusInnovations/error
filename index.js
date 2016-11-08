@@ -7,6 +7,7 @@
 
 const render = require('co-render');
 const http = require('http');
+const serializeError = require('serialize-error');
 
 /**
  * Expose `error`.
@@ -58,7 +59,13 @@ function error(opts) {
 
         case 'json':
           this.type = 'application/json';
-          if ('development' == env) this.body = { error: err.message }
+          let isDevelopment = (
+            this.isDeveloper ||
+            'development' == env ||
+            this.request.origin.includes('staging') ||
+            this.request.origin.includes('sandbox')
+          );
+          if (isDevelopment) this.body = { error: err, rawError: serializeError(err) }
           else if (err.expose) this.body = { error: err.message }
           else this.body = { error: http.STATUS_CODES[this.status] }
           break;
