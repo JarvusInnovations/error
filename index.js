@@ -67,7 +67,11 @@ function error(opts) {
             this.request.origin === 'localhost' ||
             this.request.origin === '127.0.0.1'
           );
-          if (isDevelopment) this.body = { error: err, rawError: serializeError(err) }
+          if (isDevelopment) this.body = {
+            error: serializeError(err),
+            env: env,
+            ctx: this
+          };
           else if (err.expose) this.body = { error: err.message }
           else this.body = { error: http.STATUS_CODES[this.status] }
           break;
